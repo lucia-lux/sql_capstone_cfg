@@ -175,7 +175,7 @@ class SQLData:
             self.conn.execute(stmt)
 
 
-sd =  SQLData("localhost","research","root", "Lebkuchenfabrik2412")
+sd =  SQLData("localhost","research","root", "pwd")
 sd.connect()
 sd.populate_tables()
 
