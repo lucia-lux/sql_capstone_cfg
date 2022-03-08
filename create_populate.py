@@ -11,16 +11,16 @@ from sqlalchemy import insert
 # set up class
 class SQLData:
     def __init__(self, server, db, uid, pwd):
-        self.__fake = Faker()
-        self.__server = server
-        self.__db = db
-        self.__uid = uid
-        self.__pwd = pwd
+        self.fake = Faker("en_GB")
+        self.server = server
+        self.db = db
+        self.uid = uid
+        self.pwd = pwd
       #  self.__tables = tables
     
     def connect(self):
         self.engine = sqlalchemy.create_engine(
-            f"mysql+pymysql://{self.__uid}:{self.__pwd}@{self.__server}/{self.__db}"
+            f"mysql+pymysql://{self.uid}:{self.pwd}@{self.server}/{self.db}"
         )
         self.conn = self.engine.connect()
         self.meta = MetaData(bind = self.engine)
@@ -35,29 +35,35 @@ class SQLData:
 
 
     def populate_tables(self):
+        """
+        Populate existing tables with values.
         
-        # subjects
+        """
+        # populate table "subjects"
         tbl = Table("subjects",self.meta)
+        # create values
         for _ in range(100):
             record = dict()
-            record["fname"] = self.__fake.first_name()
-            record["lname"] = self.__fake.last_name()
-            record["street_address"] = self.__fake.street_address()
-            record["postcode"] = self.__fake.postcode()
-            record["phone_number"] = self.__fake.phone_number()
-            record["email_address"] = self.__fake.email()
-            record["dob"] = self.__fake.date_of_birth()
+            record["fname"] = self.fake.first_name()
+            record["lname"] = self.fake.last_name()
+            record["street_address"] = self.fake.street_address()
+            record["postcode"] = self.fake.postcode()
+            record["phone_number"] = self.fake.phone_number()
+            record["email_address"] = self.fake.email()
+            record["dob"] = self.fake.date_of_birth()
         
+        # insert values into  table
             stmt = (
-                    insert(tbl).
-                    values(fname=record["fname"], lname=record["lname"],
-                    street_address = record["street_address"], postcode = record["postcode"],
-                    phone_number = record["phone_number"], email_address = record["email_address"],
-                    dob = record["dob"])
+                    insert(tbl).values(
+                        fname=record["fname"], lname=record["lname"],
+                        street_address = record["street_address"], postcode = record["postcode"],
+                        phone_number = record["phone_number"], email_address = record["email_address"],
+                        dob = record["dob"]
+                        )
                     )
             self.conn.execute(stmt)
         
-        # screening
+        # populate table "screening"
         tbl = Table("screening",self.meta)
         vision = ["NOR","COR","IMP"]
         handed = ["L","R"]
@@ -85,9 +91,10 @@ class SQLData:
                     )
             self.conn.execute(stmt)
 
-        # researcher
+        # populate table "researcher"
         tbl = Table("researcher",self.meta)
         dept = ["NEURO", "PHARM", "PSYCH", "MEDIC"]
+
         for _ in range(100):
             record = dict()
             record["supervisor"] = self.__fake.last_name()
@@ -111,7 +118,7 @@ class SQLData:
             record["researcher_id"] = random.randint(1,100)
             record["ethics_approved"] = random.randint(0,1)
             record["experiment_type"] = expt_type[random.randint(0,3)]
-            record["completion_date"] = self.__fake.date()
+            record["completion_date"] = self.fake.date()
             stmt = (
                     insert(tbl).
                     values(
@@ -131,7 +138,7 @@ class SQLData:
             record = dict()
             record["subject_id"] = random.randint(1,100)
             record["experiment_id"] = random.randint(1,100)
-            record["payment_date"] = self.__fake.date()
+            record["payment_date"] = self.fake.date()
             record["payment_amount"] = round(random.uniform(15.0, 65.0),1)
             stmt = (
                     insert(tbl).
@@ -152,8 +159,8 @@ class SQLData:
             record = dict()
             record["subject_id"] = sub_ids[random.randint(0,99)]
             record["experiment_id"] = exp_ids[random.randint(0,99)]
-            record["iban"] = self.__fake.iban()
-            record["swift"] = self.__fake.swift()
+            record["iban"] = self.fake.iban()
+            record["swift"] = self.fake.swift()
             stmt = (
                     insert(tbl).
                     values(
