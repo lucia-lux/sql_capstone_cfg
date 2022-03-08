@@ -94,10 +94,11 @@ class SQLData:
         # populate table "researcher"
         tbl = Table("researcher",self.meta)
         dept = ["NEURO", "PHARM", "PSYCH", "MEDIC"]
+        sup = [self.fake.last_name() for _ in range(10)]
 
         for _ in range(100):
             record = dict()
-            record["supervisor"] = self.__fake.last_name()
+            record["supervisor"] = sup[random.randint(0,9)] #self.fake.last_name()
             record["department"] = dept[random.randint(0,3)] 
             stmt = (
                     insert(tbl).
@@ -155,10 +156,11 @@ class SQLData:
         tbl = Table("payment_details",self.meta)
         sub_ids =  random.sample(range(1, 101), 100)
         exp_ids =  random.sample(range(1, 101), 100)
-        for _ in range(100):
+
+        for i in range(100):
             record = dict()
-            record["subject_id"] = sub_ids[random.randint(0,99)]
-            record["experiment_id"] = exp_ids[random.randint(0,99)]
+            record["subject_id"] = sub_ids[i]
+            record["experiment_id"] = exp_ids[i]
             record["iban"] = self.fake.iban()
             record["swift"] = self.fake.swift()
             stmt = (
